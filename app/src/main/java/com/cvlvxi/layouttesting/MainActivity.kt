@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,32 +40,6 @@ fun showToast(text: String, applicationContext: Context) {
 }
 
 @Composable
-fun ArtistCard(modifier: Modifier, onClick: () -> Unit) {
-  val applicationContext: Context = LocalContext.current
-  val padding = 50.dp
-  val p = painterResource(id = R.drawable.beb)
-  Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier.size(200.dp, 200.dp)
-//    modifier=Modifier.fillMaxSize()
-
-  ) {
-    Image(painter = p, contentDescription = "dog", modifier=Modifier.size(20.dp))
-    Column(
-      Modifier
-        .padding(padding)
-        .clickable(onClick = {
-          showToast("You are showing a toast", applicationContext)
-        }))
-    {
-      Text("Dog")
-      Text("Cat")
-    }
-  }
-}
-
-
-@Composable
 fun TopMenu(modifier: Modifier =Modifier.height(10.dp)) {
   Row() {
     Text("Church of beb")
@@ -78,7 +51,6 @@ fun TopMenu(modifier: Modifier =Modifier.height(10.dp)) {
 fun ScaffoldComposable() {
   Scaffold(
     topBar = { TopMenu() }
-//    bottomBar = { ArtistCard(modifier=Modifier.fillMaxSize(), onClick={}) },
   ) {  innerPadding ->
     var entrance = painterResource(id = R.drawable.entrance)
     BoxWithConstraints{
@@ -86,31 +58,10 @@ fun ScaffoldComposable() {
         contentScale = ContentScale.Crop,
         painter=entrance, contentDescription = "dog")
       Text(text = "Hi there!", modifier = Modifier.padding(innerPadding))
-      Walking(modifier=Modifier.align(Alignment.BottomStart), boxWidth=maxWidth)
+      val (lotties, offsetz) = generateLotties(6,  maxWidth)
+      WalkingLotties(lotties, offsetz, modifier = Modifier.align(Alignment.BottomStart))
     }
   }
 }
 
-data class DirectionalLottie(val lottieId: Int, val imageIsLeft: Boolean)
 
-@Composable
-fun Walking(modifier: Modifier, boxWidth: Dp) {
-  val maxWidth = boxWidth.value.toInt()
-  val halfMaxWidth = maxWidth / 2
-  val lotties= listOf(
-    DirectionalLottie(R.raw.catwalk, false),
-    DirectionalLottie(R.raw.walking_girl2, false),
-    DirectionalLottie(R.raw.walking_girl3, true),
-    DirectionalLottie(R.raw.walking_guy3, true),
-  )
-  for (i in 0..10) {
-    val randStart = Random.nextInt(0, maxWidth)
-    val endX = if (randStart < halfMaxWidth) maxWidth+randStart else 0-randStart
-    MovingLottie(
-      dLottie=lotties[i % lotties.size],
-      modifier=modifier,
-      startX=randStart,
-      endX=endX
-    )
-  }
-}
