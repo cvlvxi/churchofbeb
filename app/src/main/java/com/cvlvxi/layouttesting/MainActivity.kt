@@ -24,8 +24,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlin.random.Random
 import com.cvlvxi.layouttesting.ui.theme.LayoutTestingTheme
 
 
@@ -64,10 +66,10 @@ fun ArtistCard(modifier: Modifier, onClick: () -> Unit) {
     Image(painter = p, contentDescription = "dog", modifier=Modifier.size(20.dp))
     Column(
       Modifier
-      .padding(padding)
-      .clickable(onClick = {
-        showToast("You are showing a toast", applicationContext)
-      }))
+        .padding(padding)
+        .clickable(onClick = {
+          showToast("You are showing a toast", applicationContext)
+        }))
     {
       Text("Dog")
       Text("Cat")
@@ -94,35 +96,37 @@ fun ScaffoldComposable() {
 //    bottomBar = { ArtistCard(modifier=Modifier.fillMaxSize(), onClick={}) },
   ) {  innerPadding ->
     var entrance = painterResource(id = R.drawable.entrance)
-    Box {
+    BoxWithConstraints{
       Image(modifier=Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
         painter=entrance, contentDescription = "dog")
       Text(text = "Hi there!", modifier = Modifier.padding(innerPadding))
-      WalkingPeople(modifier=Modifier.align(Alignment.BottomStart))
+      Walking(modifier=Modifier.align(Alignment.BottomStart), boxWidth=maxWidth)
     }
   }
 }
 
-@Composable
-fun WalkingPeople(modifier: Modifier) {
-  val lottes = listOf(R.raw.catwalk, R.raw.walking_girl2)
-  MovingLottie(lottieId=lottes[0], modifier=modifier, startX=0, endX=500)
-  MovingLottie(lottieId=lottes[1], modifier=modifier, startX=300, endX=0)
-}
-
+data class DirectionalLottie(val lottieId: Int, val imageIsLeft: Boolean)
 
 @Composable
-fun MovingImage(modifier: Modifier, startX: Int, endX: Int) {
-  val beb = painterResource(id = R.drawable.beb)
-  var offsetX by remember {mutableStateOf(startX)}
-  LaunchedEffect(Unit) {
-    animate(
-      initialValue = startX.toFloat(),
-      targetValue = endX.toFloat(),
-      animationSpec = tween(durationMillis = 5000, delayMillis = 1000, easing = LinearEasing),
-      block = { value: Float, _: Float -> run { offsetX = value.toInt() } }
+fun Walking(modifier: Modifier, boxWidth: Dp) {
+  val maxWidth = boxWidth.value.toInt()
+  val halfMaxWidth = maxWidth / 2
+  val lotties= listOf(
+    DirectionalLottie(R.raw.catwalk, false),
+    DirectionalLottie(R.raw.walking_girl2, false),
+    DirectionalLottie(R.raw.walking_girl3, true),
+    DirectionalLottie(R.raw.walking_guy3, true),
+  )
+  for (i in 0..10) {
+    val randStart = Random.nextInt(0, maxWidth)
+    val endX = if (randStart < halfMaxWidth) maxWidth+randStart else 0-randStart
+
+    MovingLottie(
+      dLottie=lotties[i % lotties.size],
+      modifier=modifier,
+      startX=randStart,
+      endX=endX
     )
   }
-  Image(painter = beb, contentDescription="beb", modifier=modifier.size(100.dp).offset(x=offsetX.dp))
 }
