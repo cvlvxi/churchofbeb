@@ -26,13 +26,10 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       LayoutTestingTheme {
-        // A surface container using the 'background' color from the theme
         val modifier = Modifier.fillMaxSize()
-        Surface(modifier = modifier, color = MaterialTheme.colors.background) {
           ArtistCard(modifier = modifier, onClick = {
 
           })
-        }
       }
     }
   }
@@ -50,8 +47,9 @@ fun ArtistCard(modifier: Modifier, onClick: () -> Unit) {
   val padding = 50.dp
   val p = painterResource(id = R.drawable.beb)
   Row(
-//    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier.size(300.dp, 200.dp)
+    verticalAlignment = Alignment.CenterVertically,
+//    modifier = Modifier.size(300.dp, 200.dp)
+    modifier=Modifier.fillMaxSize()
 
   ) {
     Image(painter = p, contentDescription = "dog", modifier=Modifier.size(100.dp))
@@ -66,4 +64,9 @@ fun ArtistCard(modifier: Modifier, onClick: () -> Unit) {
       Text("Cat")
     }
   }
+}
+
+@Composable
+fun BoxedComposable() {
+
 }
