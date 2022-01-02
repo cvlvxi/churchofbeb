@@ -106,9 +106,11 @@ fun ScaffoldComposable() {
 
 @Composable
 fun WalkingPeople(modifier: Modifier) {
-  MovingImage(modifier=modifier, startX=0, endX=500)
-  MovingImage(modifier=modifier, startX=300, endX=0)
+  val lottes = listOf(R.raw.catwalk, R.raw.walking_girl2)
+  MovingLottie(lottieId=lottes[0], modifier=modifier, startX=0, endX=500)
+  MovingLottie(lottieId=lottes[1], modifier=modifier, startX=300, endX=0)
 }
+
 
 @Composable
 fun MovingImage(modifier: Modifier, startX: Int, endX: Int) {
