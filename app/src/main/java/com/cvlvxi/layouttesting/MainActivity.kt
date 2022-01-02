@@ -5,27 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 import com.cvlvxi.layouttesting.ui.theme.LayoutTestingTheme
@@ -48,9 +39,6 @@ fun showToast(text: String, applicationContext: Context) {
   val toast = Toast.makeText(applicationContext, text, duration)
   toast.show()
 }
-
-
-
 
 @Composable
 fun ArtistCard(modifier: Modifier, onClick: () -> Unit) {
@@ -86,9 +74,6 @@ fun TopMenu(modifier: Modifier =Modifier.height(10.dp)) {
   }
 }
 
-
-
-
 @Composable
 fun ScaffoldComposable() {
   Scaffold(
@@ -121,7 +106,6 @@ fun Walking(modifier: Modifier, boxWidth: Dp) {
   for (i in 0..10) {
     val randStart = Random.nextInt(0, maxWidth)
     val endX = if (randStart < halfMaxWidth) maxWidth+randStart else 0-randStart
-
     MovingLottie(
       dLottie=lotties[i % lotties.size],
       modifier=modifier,
