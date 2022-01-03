@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -15,9 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlin.random.Random
 import com.cvlvxi.layouttesting.ui.theme.LayoutTestingTheme
 
 
@@ -58,8 +55,8 @@ fun ScaffoldComposable() {
         contentScale = ContentScale.Crop,
         painter=entrance, contentDescription = "dog")
       Text(text = "Hi there!", modifier = Modifier.padding(innerPadding))
-      val (lotties, offsetz) = generateLotties(6,  maxWidth)
-      WalkingLotties(lotties, offsetz, modifier = Modifier.align(Alignment.BottomStart))
+      val lotties = generateLotties(1,  maxWidth)
+      WalkingLotties(lotties, modifier = Modifier.align(Alignment.BottomStart), boxMaxWidth = maxWidth, boxMinWidth = minWidth)
     }
   }
 }
