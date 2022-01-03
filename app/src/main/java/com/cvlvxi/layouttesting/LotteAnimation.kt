@@ -88,7 +88,6 @@ fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
         DirectionalLottie(R.raw.walking_guy1, false),
         DirectionalLottie(R.raw.walking_guy2, false),
         DirectionalLottie(R.raw.walking_guy3, true),
-        DirectionalLottie(R.raw.walking_guy4, false),
         DirectionalLottie(R.raw.walking_duck1, false),
         DirectionalLottie(R.raw.walking_orange1, false),
         DirectionalLottie(R.raw.walking_peach1, false),
