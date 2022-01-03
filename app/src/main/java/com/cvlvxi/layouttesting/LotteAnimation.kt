@@ -22,20 +22,11 @@ data class Lottie(
     var endX: Float,
     var walkingDuration: Int
 ) {
-    val initDirectionRight: Boolean = this.endX > this.startX
-    val initDierctionLeft: Boolean = this.startX > this.endX
-    val shouldReverse: Boolean = if (this.imageIsLeft) (this.initDirectionRight) else (this.initDierctionLeft)
     var prevOffsetX: Float? = null
 
-    fun shouldMirror(newOffsetX: Float): Boolean? {
-        if (prevOffsetX == null) {
-            return null
-        }
-        val isRight = prevOffsetX!! < newOffsetX
-
-//        return (imageIsLeft && !isRight) || (!imageIsLeft && isRight)
-//        return imageIsLeft != isRight
-        return imageIsLeft xor isRight
+    fun shouldMirror(newOffsetX: Float): Boolean {
+        val isRight = (prevOffsetX?: startX) < newOffsetX
+        return imageIsLeft == isRight
     }
 }
 
@@ -89,8 +80,6 @@ fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier, boxMaxWidth: Dp, b
                 repeatMode = RepeatMode.Reverse
             )
         )
-        val shouldReverse = lottie.shouldMirror(offsetX)?:lottie.shouldReverse
-        lottie.prevOffsetX = offsetX
         println("Prev OffsetX ${lottie.prevOffsetX}")
         LottieAnimation(
             composition,
@@ -98,8 +87,9 @@ fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier, boxMaxWidth: Dp, b
             modifier = modifier
                 .size(100.dp)
                 .offset(x = offsetX.toInt().dp)
-                .scale(scaleX = if (shouldReverse) 1f else -1f, scaleY = 1f)
+                .scale(scaleX = if (lottie.shouldMirror(offsetX)) -1f else 1f, scaleY = 1f)
         )
+        lottie.prevOffsetX = offsetX
     }
 }
 
