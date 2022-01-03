@@ -10,12 +10,14 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
 import kotlin.random.Random
 
+
+
 data class DirectionalLottie(
     val lottieId: Int,
     val imageIsLeft: Boolean,
 )
 
-data class Lottie(
+data class MovingLottie(
     val lottieId: Int,
     val imageIsLeft: Boolean,
     var startX: Float,
@@ -30,17 +32,32 @@ data class Lottie(
     }
 }
 
-fun generateLotties(lottiePool: List<DirectionalLottie>, howMany: Int, boxMaxWidth: Dp): List<Lottie> {
+@Composable
+fun SimpleLottie(
+    lottieId: Int,
+    modifier: Modifier,
+    size: Dp = 100.dp
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieId))
+    LottieAnimation(
+        composition,
+        iterations = LottieConstants.IterateForever,
+        modifier = modifier
+            .size(size)
+    )
+}
+
+fun generateLotties(lottiePool: List<DirectionalLottie>, howMany: Int, boxMaxWidth: Dp): List<MovingLottie> {
     val maxWidth = boxMaxWidth.value.toInt()
     val halfMaxWidth = maxWidth / 2
 
 
-    val lotties = mutableListOf<Lottie>()
+    val lotties = mutableListOf<MovingLottie>()
     (0 until howMany).forEach { _ ->
         val startX = Random.nextInt(0, maxWidth)
         val endX = if (startX < halfMaxWidth) (maxWidth+startX) else (0 - startX)
         val randIdx = Random.nextInt(0, lottiePool.size)
-        lotties.add(Lottie(
+        lotties.add(MovingLottie(
             lottieId=lottiePool[randIdx].lottieId,
             imageIsLeft=lottiePool[randIdx].imageIsLeft,
             startX=startX.toFloat(),
@@ -64,12 +81,17 @@ fun FlyingLotties(modifier: Modifier, maxWidth: Dp) {
 @Composable
 fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
     val lottiePool= listOf(
-        DirectionalLottie(R.raw.catwalk, false),
+        DirectionalLottie(R.raw.walking_cat1, false),
+        DirectionalLottie(R.raw.walking_girl1, false),
         DirectionalLottie(R.raw.walking_girl2, false),
         DirectionalLottie(R.raw.walking_girl3, true),
-        DirectionalLottie(R.raw.walking_guy3, true),
-        DirectionalLottie(R.raw.walking_girl1, false),
         DirectionalLottie(R.raw.walking_guy1, false),
+        DirectionalLottie(R.raw.walking_guy2, false),
+        DirectionalLottie(R.raw.walking_guy3, true),
+        DirectionalLottie(R.raw.walking_guy4, false),
+        DirectionalLottie(R.raw.walking_duck1, false),
+        DirectionalLottie(R.raw.walking_orange1, false),
+        DirectionalLottie(R.raw.walking_peach1, false),
     )
     val lotties = generateLotties(lottiePool, numLotties,  maxWidth)
     MoveXLotties(lotties, modifier = modifier)
@@ -77,7 +99,7 @@ fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
 
 
 @Composable
-fun MoveXLotties(lotties: List<Lottie>, modifier: Modifier) {
+fun MoveXLotties(lotties: List<MovingLottie>, modifier: Modifier) {
     lotties.forEach { lottie ->
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
         val startX by remember { mutableStateOf(lottie.startX) }
@@ -96,7 +118,6 @@ fun MoveXLotties(lotties: List<Lottie>, modifier: Modifier) {
                 repeatMode = RepeatMode.Reverse
             )
         )
-        println("Prev OffsetX ${lottie.prevOffsetX}")
         LottieAnimation(
             composition,
             iterations = LottieConstants.IterateForever,
