@@ -20,8 +20,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       LayoutTestingTheme {
-        //        ExampleNoCanvas()
-        ExampleWithCanvas(modifier=Modifier.fillMaxSize())
+        ExampleNoCanvas()
       }
     }
   }
@@ -58,6 +57,7 @@ fun ScaffoldComposable() {
           painter = entrance,
           contentDescription = "dog")
       Text(text = "Hi there!", modifier = Modifier.padding(innerPadding))
+      FlyingLotties(modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
       RunWalkingLotties(
           numLotties = 10, modifier = Modifier.align(Alignment.BottomStart), maxWidth = maxWidth)
     }

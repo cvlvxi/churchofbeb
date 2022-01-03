@@ -3,7 +3,6 @@ package com.cvlvxi.layouttesting
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.Dp
@@ -31,10 +30,40 @@ data class Lottie(
     }
 }
 
-fun generateLotties(howMany: Int, boxMaxWidth: Dp): List<Lottie> {
+fun generateLotties(lottiePool: List<DirectionalLottie>, howMany: Int, boxMaxWidth: Dp): List<Lottie> {
     val maxWidth = boxMaxWidth.value.toInt()
     val halfMaxWidth = maxWidth / 2
-    val lottieIds= listOf(
+
+
+    val lotties = mutableListOf<Lottie>()
+    (0 until howMany).forEach { _ ->
+        val startX = Random.nextInt(0, maxWidth)
+        val endX = if (startX < halfMaxWidth) (maxWidth+startX) else (0 - startX)
+        val randIdx = Random.nextInt(0, lottiePool.size)
+        lotties.add(Lottie(
+            lottieId=lottiePool[randIdx].lottieId,
+            imageIsLeft=lottiePool[randIdx].imageIsLeft,
+            startX=startX.toFloat(),
+            endX=endX.toFloat(),
+            walkingDuration = Random.nextInt(5,30) * 1000,
+        ))
+    }
+    return lotties
+}
+
+@Composable
+fun FlyingLotties(modifier: Modifier, maxWidth: Dp) {
+    val lottiePool= listOf(
+        DirectionalLottie(R.raw.birds_flying1, false)
+    )
+    val lotties = generateLotties(lottiePool, 2,  maxWidth)
+    MoveXLotties(lotties, modifier = modifier)
+}
+
+
+@Composable
+fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
+    val lottiePool= listOf(
         DirectionalLottie(R.raw.catwalk, false),
         DirectionalLottie(R.raw.walking_girl2, false),
         DirectionalLottie(R.raw.walking_girl3, true),
@@ -42,33 +71,13 @@ fun generateLotties(howMany: Int, boxMaxWidth: Dp): List<Lottie> {
         DirectionalLottie(R.raw.walking_girl1, false),
         DirectionalLottie(R.raw.walking_guy1, false),
     )
-
-    val lottieList = mutableListOf<Lottie>()
-    (0 until howMany).forEach { _ ->
-        val startX = Random.nextInt(0, maxWidth)
-        val endX = if (startX < halfMaxWidth) (maxWidth+startX) else (0 - startX)
-        val randIdx = Random.nextInt(0, lottieIds.size)
-        lottieList.add(Lottie(
-            lottieId=lottieIds[randIdx].lottieId,
-            imageIsLeft=lottieIds[randIdx].imageIsLeft,
-            startX=startX.toFloat(),
-            endX=endX.toFloat(),
-            walkingDuration = Random.nextInt(5,30) * 1000,
-        ))
-    }
-    return lottieList
-}
-
-@Composable
-fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
-    val lotties = generateLotties(numLotties,  maxWidth)
-    WalkingLotties(lotties, modifier = modifier)
-
+    val lotties = generateLotties(lottiePool, numLotties,  maxWidth)
+    MoveXLotties(lotties, modifier = modifier)
 }
 
 
 @Composable
-fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier) {
+fun MoveXLotties(lotties: List<Lottie>, modifier: Modifier) {
     lotties.forEach { lottie ->
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
         val startX by remember { mutableStateOf(lottie.startX) }
