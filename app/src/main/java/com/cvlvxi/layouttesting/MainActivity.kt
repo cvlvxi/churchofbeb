@@ -1,8 +1,6 @@
 package com.cvlvxi.layouttesting
 
-import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -17,27 +15,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cvlvxi.layouttesting.ui.theme.LayoutTestingTheme
 
-
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
       LayoutTestingTheme {
-        Text(text="dog")
-        ScaffoldComposable()
+        //        ExampleNoCanvas()
+        ExampleWithCanvas(modifier=Modifier.fillMaxSize())
       }
     }
   }
 }
 
-fun showToast(text: String, applicationContext: Context) {
-  val duration = Toast.LENGTH_SHORT
-  val toast = Toast.makeText(applicationContext, text, duration)
-  toast.show()
+@Composable
+fun ExampleNoCanvas() {
+  Text(text = "dog")
+  ScaffoldComposable()
 }
 
 @Composable
-fun TopMenu(modifier: Modifier =Modifier.height(10.dp)) {
+fun ExampleWithCanvas(modifier: Modifier) {
+  Text("dog")
+  DrawCanvas(modifier=modifier)
+}
+
+@Composable
+fun TopMenu(modifier: Modifier = Modifier.height(10.dp)) {
   Row() {
     Text("Church of beb")
     Text("Go here link")
@@ -46,19 +49,17 @@ fun TopMenu(modifier: Modifier =Modifier.height(10.dp)) {
 
 @Composable
 fun ScaffoldComposable() {
-  Scaffold(
-    topBar = { TopMenu() }
-  ) {  innerPadding ->
+  Scaffold(topBar = { TopMenu() }) { innerPadding ->
     var entrance = painterResource(id = R.drawable.entrance)
-    BoxWithConstraints{
-      Image(modifier=Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop,
-        painter=entrance, contentDescription = "dog")
+    BoxWithConstraints {
+      Image(
+          modifier = Modifier.fillMaxSize(),
+          contentScale = ContentScale.Crop,
+          painter = entrance,
+          contentDescription = "dog")
       Text(text = "Hi there!", modifier = Modifier.padding(innerPadding))
-      val lotties = generateLotties(1,  maxWidth)
-      WalkingLotties(lotties, modifier = Modifier.align(Alignment.BottomStart), boxMaxWidth = maxWidth, boxMinWidth = minWidth)
+      RunWalkingLotties(
+          numLotties = 10, modifier = Modifier.align(Alignment.BottomStart), maxWidth = maxWidth)
     }
   }
 }
-
-

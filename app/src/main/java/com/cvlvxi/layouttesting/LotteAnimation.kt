@@ -3,6 +3,7 @@ package com.cvlvxi.layouttesting
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.Dp
@@ -58,9 +59,16 @@ fun generateLotties(howMany: Int, boxMaxWidth: Dp): List<Lottie> {
     return lottieList
 }
 
+@Composable
+fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
+    val lotties = generateLotties(numLotties,  maxWidth)
+    WalkingLotties(lotties, modifier = modifier)
+
+}
+
 
 @Composable
-fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier, boxMaxWidth: Dp, boxMinWidth: Dp) {
+fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier) {
     lotties.forEach { lottie ->
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
         val startX by remember { mutableStateOf(lottie.startX) }
@@ -72,8 +80,7 @@ fun WalkingLotties(lotties: List<Lottie>, modifier: Modifier, boxMaxWidth: Dp, b
 
             animationSpec = InfiniteRepeatableSpec(
                 animation = tween(
-//                    durationMillis=lottie.walkingDuration,
-                    durationMillis=5000,
+                    durationMillis=lottie.walkingDuration,
                     delayMillis = 0,
                     easing = LinearEasing
                 ),
