@@ -49,6 +49,39 @@ fun RunWalkingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifie
 }
 
 @Composable
+fun FireworkLotties(modifier: Modifier) {
+  val lottiePool =
+      listOf(
+          //          DirectionalLottie(R.raw.rocket1, false),
+          DirectionalLottie(R.raw.fireworks1, false),
+          DirectionalLottie(R.raw.fireworks2, false),
+          DirectionalLottie(R.raw.fireworks3, false),
+          DirectionalLottie(R.raw.fireworks4, false),
+      )
+  val numFireworks = 3
+  val lotties =
+      listOf(
+          MovingLottieContainer(
+              lottiePool[0].lottieId,
+              imageIsLeft = lottiePool[0].imageIsLeft,
+              start = 0.0f,
+              end = 100.0f,
+              size = 200.dp,
+              walkingDuration = 2000,
+          ),
+    MovingLottieContainer(
+        lottiePool[1].lottieId,
+        imageIsLeft = lottiePool[0].imageIsLeft,
+        start = 50.0f,
+        end = 55.0f,
+        size = 100.dp,
+        walkingDuration = 2000,
+    ))
+
+    MovingLotties(false, lotties, modifier = modifier, isUp = true)
+}
+
+@Composable
 fun ChurchEntrance() {
   var nightMode by remember { mutableStateOf(false) }
   Text(text = "dog")
@@ -144,6 +177,9 @@ fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
                 Modifier.align(Alignment.Center).alpha(bebFaceAlpha).size(70.dp).clickable {
                   toggleNightMode()
                 })
+      }
+      if (nightMode) {
+        FireworkLotties(modifier = Modifier.align(Alignment.Center).offset(y= (-200).dp))
       }
     }
   }

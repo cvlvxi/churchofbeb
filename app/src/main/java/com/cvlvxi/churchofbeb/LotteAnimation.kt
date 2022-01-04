@@ -21,7 +21,8 @@ data class MovingLottieContainer(
     val imageIsLeft: Boolean,
     var start: Float,
     var end: Float,
-    var walkingDuration: Int
+    var walkingDuration: Int,
+    var size: Dp = 100.dp
 ) {
   var prevOffset: Float? = null
 
@@ -100,7 +101,9 @@ fun generateLotties(
 fun MovingLotties(
     shouldSuspend: Boolean,
     lotties: List<MovingLottieContainer>,
-    modifier: Modifier
+    modifier: Modifier,
+    isUp: Boolean = false,
+    infiniteRepeatMode: RepeatMode = RepeatMode.Reverse
 ) {
   lotties.forEach { lottie ->
     val specInfinite =
@@ -110,7 +113,7 @@ fun MovingLotties(
                     durationMillis = lottie.walkingDuration,
                     delayMillis = 0,
                     easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse)
+            repeatMode = infiniteRepeatMode)
     val specFinite = TweenSpec<Float>(durationMillis = 1000, delay = 0, easing = LinearEasing)
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
     val offset = remember { Animatable(lottie.start) }
@@ -118,15 +121,21 @@ fun MovingLotties(
     LaunchedEffect(shouldSuspend) {
       offset.animateTo(lottie.end, animationSpec = if (!shouldSuspend) specInfinite else specFinite)
     }
-
-    LottieAnimation(
-        composition,
-        iterations = LottieConstants.IterateForever,
-        modifier =
-            modifier
-                .size(100.dp)
-                .offset(x = offset.value.dp)
-                .scale(scaleX = if (lottie.shouldMirror(offset.value)) -1f else 1f, scaleY = 1f))
-    lottie.prevOffset = offset.value
+    if (!isUp) {
+      LottieAnimation(
+          composition,
+          iterations = LottieConstants.IterateForever,
+          modifier =
+              modifier
+                  .size(lottie.size)
+                  .offset(x = offset.value.dp)
+                  .scale(scaleX = if (lottie.shouldMirror(offset.value)) -1f else 1f, scaleY = 1f))
+      lottie.prevOffset = offset.value
+    } else {
+      LottieAnimation(
+          composition,
+          iterations = LottieConstants.IterateForever,
+          modifier = modifier.size(lottie.size).offset(y = -offset.value.dp))
+    }
   }
 }
