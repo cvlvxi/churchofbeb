@@ -74,12 +74,12 @@ fun FlyingLotties(modifier: Modifier, maxWidth: Dp) {
         DirectionalLottie(R.raw.birds_flying1, false)
     )
     val lotties = generateLotties(lottiePool, 2,  maxWidth)
-    MoveXLotties(lotties, modifier = modifier)
+    MoveXLotties(false, lotties, modifier = modifier)
 }
 
 
 @Composable
-fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
+fun RunWalkingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifier, maxWidth: Dp) {
     val lottiePool= listOf(
         DirectionalLottie(R.raw.walking_cat1, false),
         DirectionalLottie(R.raw.walking_girl1, false),
@@ -93,39 +93,45 @@ fun RunWalkingLotties(numLotties: Int, modifier: Modifier, maxWidth: Dp) {
         DirectionalLottie(R.raw.walking_peach1, false),
     )
     val lotties = generateLotties(lottiePool, numLotties,  maxWidth)
-    MoveXLotties(lotties, modifier = modifier)
+    MoveXLotties(shouldSuspend, lotties, modifier = modifier)
 }
 
 
 @Composable
-fun MoveXLotties(lotties: List<MovingLottie>, modifier: Modifier) {
+fun MoveXLotties(shouldSuspend: Boolean, lotties: List<MovingLottie>, modifier: Modifier) {
     lotties.forEach { lottie ->
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
-        val startX by remember { mutableStateOf(lottie.startX) }
-        val infiniteTransition = rememberInfiniteTransition()
-
-        val offsetX by infiniteTransition.animateFloat(
-            initialValue = startX,
-            targetValue = lottie.endX,
-
-            animationSpec = InfiniteRepeatableSpec(
-                animation = tween(
-                    durationMillis=lottie.walkingDuration,
-                    delayMillis = 0,
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Reverse
-            )
+        val specInfinite = InfiniteRepeatableSpec<Float>(
+            animation = tween(
+                durationMillis=lottie.walkingDuration,
+                delayMillis = 0,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Reverse
         )
+        val specFinite = TweenSpec<Float>(
+            durationMillis=1000,
+            delay = 0,
+            easing = LinearEasing
+        )
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
+        val offsetX = remember { Animatable(lottie.startX) }
+
+        LaunchedEffect(shouldSuspend) {
+            offsetX.animateTo(
+                lottie.endX,
+                animationSpec = if (!shouldSuspend) specInfinite else specFinite
+            )
+        }
+
         LottieAnimation(
             composition,
             iterations = LottieConstants.IterateForever,
             modifier = modifier
                 .size(100.dp)
-                .offset(x = offsetX.toInt().dp)
-                .scale(scaleX = if (lottie.shouldMirror(offsetX)) -1f else 1f, scaleY = 1f)
+                .offset(x = offsetX.value.dp)
+                .scale(scaleX = if (lottie.shouldMirror(offsetX.value)) -1f else 1f, scaleY = 1f)
         )
-        lottie.prevOffsetX = offsetX
+        lottie.prevOffsetX = offsetX.value
     }
 }
 

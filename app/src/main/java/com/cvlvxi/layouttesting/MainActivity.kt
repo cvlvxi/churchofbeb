@@ -1,6 +1,5 @@
 package com.cvlvxi.layouttesting
 
-import android.graphics.Color.alpha
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,9 +47,12 @@ fun TopMenu(modifier: Modifier = Modifier.height(10.dp)) {
 
 @Composable
 fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
-  Scaffold(topBar = { TopMenu() }) {
+  //  Scaffold(topBar = { TopMenu() }) {
+
+  Scaffold() {
     val entrance = painterResource(id = R.drawable.entrance)
     val bebface = painterResource(id = R.drawable.bebface)
+    val nightMode2 by rememberUpdatedState(nightMode)
 
     BoxWithConstraints {
       Image(
@@ -59,7 +61,7 @@ fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
           painter = entrance,
           contentDescription = "Entrance")
 
-      FlyingLotties(modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
+//      FlyingLotties(modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
 
       SimpleLottie(
           lottieId = R.raw.door_sign1,
@@ -67,21 +69,22 @@ fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
           modifier = Modifier.align(Alignment.Center).offset(y = 200.dp, x = -30.dp),
       )
       RunWalkingLotties(
-          numLotties = 8, modifier = Modifier.align(Alignment.BottomStart), maxWidth = maxWidth)
+          nightMode2, numLotties = 8, modifier = Modifier.align(Alignment.BottomStart), maxWidth = maxWidth)
 
       val dayTime = Color.Yellow
 
       val nightTime = Color.Black
-      val sunMoonAlpha : Float by
-        animateFloatAsState(
-            if (!nightMode) 0.1f else 0.6f,
-            animationSpec =
-            tween(durationMillis = 3000, delayMillis = 0, easing = LinearEasing))
+
+      val sunMoonAlpha: Float by
+          animateFloatAsState(
+              if (!nightMode) 0.1f else 0.8f,
+              animationSpec = tween(durationMillis = 3000, delayMillis = 0, easing = LinearEasing))
 
       val backgroundColor by
           animateColorAsState(
               if (nightMode) nightTime else dayTime,
               animationSpec = tween(durationMillis = 3000, delayMillis = 0, easing = LinearEasing))
+
       Canvas(modifier = Modifier.fillMaxSize()) { drawRect(backgroundColor, alpha = sunMoonAlpha) }
 
       Box(modifier = Modifier.align(Alignment.TopEnd).offset(x = 50.dp, y = (-50).dp)) {
