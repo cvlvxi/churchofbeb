@@ -58,7 +58,6 @@ fun FireworkLotties(modifier: Modifier) {
           DirectionalLottie(R.raw.fireworks3, false),
           DirectionalLottie(R.raw.fireworks4, false),
       )
-  val numFireworks = 3
   val lotties =
       listOf(
           MovingLottieContainer(
@@ -91,34 +90,29 @@ fun ChurchEntrance() {
   )
 }
 
-// @Composable
-// fun TopMenu(modifier: Modifier = Modifier.height(10.dp)) {
-//    Text("Welcome to the Church of the Beb")
-// }
-
 @Composable
 fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
   //  Scaffold(topBar = { TopMenu() }) {
 
-  Scaffold() {
+  Scaffold {
     val entrance = painterResource(id = R.drawable.entrance)
     val bebface = painterResource(id = R.drawable.bebface)
     val nightMode2 by rememberUpdatedState(nightMode)
 
     BoxWithConstraints {
-      val SimpleFloatTween =
+      val simpleFloatTween =
           TweenSpec<Float>(durationMillis = 3000, delay = 0, easing = LinearEasing)
-      val SimpleColorTween =
+      val simpleColorTween =
           TweenSpec<Color>(durationMillis = 3000, delay = 0, easing = LinearEasing)
       val dayTime = Color.Yellow
       val nightTime = Color.Black
       val dayToNightAlpha: Float by
-          animateFloatAsState(if (!nightMode) 0.1f else 0.8f, animationSpec = SimpleFloatTween)
+          animateFloatAsState(if (!nightMode) 0.1f else 0.65f, animationSpec = simpleFloatTween)
       val bebFaceAlpha: Float by
-          animateFloatAsState(if (!nightMode) 0.7f else 0.8f, animationSpec = SimpleFloatTween)
+          animateFloatAsState(if (!nightMode) 0.7f else 0.8f, animationSpec = simpleFloatTween)
       val backgroundColor by
           animateColorAsState(
-              if (nightMode) nightTime else dayTime, animationSpec = SimpleColorTween)
+              if (nightMode) nightTime else dayTime, animationSpec = simpleColorTween)
 
       Image(
           modifier = Modifier.fillMaxSize(),
@@ -128,7 +122,7 @@ fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
 
       FlyingLotties(nightMode2, modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
 
-      Box(modifier = Modifier.align(Alignment.Center).offset(y = 200.dp, x = -30.dp)) {
+      Box(modifier = Modifier.align(Alignment.Center).offset(y = 200.dp, x = (-30).dp)) {
         TransitionAlphaSimpleLottie(
             lottieId = R.raw.door_sign1,
             size = 50.dp,
