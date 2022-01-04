@@ -8,7 +8,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
-import com.cvlvxi.churchofbeb.R
 import kotlin.random.Random
 
 
@@ -18,17 +17,17 @@ data class DirectionalLottie(
     val imageIsLeft: Boolean,
 )
 
-data class MovingLottie(
+data class movingLottieContainer(
     val lottieId: Int,
     val imageIsLeft: Boolean,
-    var startX: Float,
-    var endX: Float,
+    var start: Float,
+    var end: Float,
     var walkingDuration: Int
 ) {
-    var prevOffsetX: Float? = null
+    var prevOffset: Float? = null
 
     fun shouldMirror(newOffsetX: Float): Boolean {
-        val isRight = (prevOffsetX?: startX) < newOffsetX
+        val isRight = (prevOffset?: start) < newOffsetX
         return imageIsLeft == isRight
     }
 }
@@ -48,58 +47,32 @@ fun SimpleLottie(
     )
 }
 
-fun generateLotties(lottiePool: List<DirectionalLottie>, howMany: Int, boxMaxWidth: Dp): List<MovingLottie> {
+fun generateLotties(lottiePool: List<DirectionalLottie>, howMany: Int, boxMaxWidth: Dp): List<movingLottieContainer> {
     val maxWidth = boxMaxWidth.value.toInt()
     val halfMaxWidth = maxWidth / 2
 
 
-    val lotties = mutableListOf<MovingLottie>()
+    val lotties = mutableListOf<movingLottieContainer>()
     (0 until howMany).forEach { _ ->
-        val startX = Random.nextInt(0, maxWidth)
-        val endX = if (startX < halfMaxWidth) (maxWidth+startX) else (0 - startX)
+        val start = Random.nextInt(0, maxWidth)
+        val end = if (start < halfMaxWidth) (maxWidth+start) else (0 - start)
         val randIdx = Random.nextInt(0, lottiePool.size)
-        lotties.add(MovingLottie(
+        lotties.add(movingLottieContainer(
             lottieId=lottiePool[randIdx].lottieId,
             imageIsLeft=lottiePool[randIdx].imageIsLeft,
-            startX=startX.toFloat(),
-            endX=endX.toFloat(),
+            start=start.toFloat(),
+            end=end.toFloat(),
             walkingDuration = Random.nextInt(5,30) * 1000,
         ))
     }
     return lotties
 }
 
-@Composable
-fun FlyingLotties(modifier: Modifier, maxWidth: Dp) {
-    val lottiePool= listOf(
-        DirectionalLottie(R.raw.birds_flying1, false)
-    )
-    val lotties = generateLotties(lottiePool, 2,  maxWidth)
-    MoveXLotties(false, lotties, modifier = modifier)
-}
+
 
 
 @Composable
-fun RunWalkingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifier, maxWidth: Dp) {
-    val lottiePool= listOf(
-        DirectionalLottie(R.raw.walking_cat1, false),
-        DirectionalLottie(R.raw.walking_girl1, false),
-        DirectionalLottie(R.raw.walking_girl2, false),
-        DirectionalLottie(R.raw.walking_girl3, true),
-        DirectionalLottie(R.raw.walking_guy1, false),
-        DirectionalLottie(R.raw.walking_guy2, false),
-        DirectionalLottie(R.raw.walking_guy3, true),
-        DirectionalLottie(R.raw.walking_duck1, false),
-        DirectionalLottie(R.raw.walking_orange1, false),
-        DirectionalLottie(R.raw.walking_peach1, false),
-    )
-    val lotties = generateLotties(lottiePool, numLotties,  maxWidth)
-    MoveXLotties(shouldSuspend, lotties, modifier = modifier)
-}
-
-
-@Composable
-fun MoveXLotties(shouldSuspend: Boolean, lotties: List<MovingLottie>, modifier: Modifier) {
+fun MoveXLotties(shouldSuspend: Boolean, lotties: List<movingLottieContainer>, modifier: Modifier) {
     lotties.forEach { lottie ->
         val specInfinite = InfiniteRepeatableSpec<Float>(
             animation = tween(
@@ -115,11 +88,11 @@ fun MoveXLotties(shouldSuspend: Boolean, lotties: List<MovingLottie>, modifier: 
             easing = LinearEasing
         )
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottie.lottieId))
-        val offsetX = remember { Animatable(lottie.startX) }
+        val offset = remember { Animatable(lottie.start) }
 
         LaunchedEffect(shouldSuspend) {
-            offsetX.animateTo(
-                lottie.endX,
+            offset.animateTo(
+                lottie.end,
                 animationSpec = if (!shouldSuspend) specInfinite else specFinite
             )
         }
@@ -129,10 +102,10 @@ fun MoveXLotties(shouldSuspend: Boolean, lotties: List<MovingLottie>, modifier: 
             iterations = LottieConstants.IterateForever,
             modifier = modifier
                 .size(100.dp)
-                .offset(x = offsetX.value.dp)
-                .scale(scaleX = if (lottie.shouldMirror(offsetX.value)) -1f else 1f, scaleY = 1f)
+                .offset(x = offset.value.dp)
+                .scale(scaleX = if (lottie.shouldMirror(offset.value)) -1f else 1f, scaleY = 1f)
         )
-        lottie.prevOffsetX = offsetX.value
+        lottie.prevOffset = offset.value
     }
 }
 
