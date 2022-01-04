@@ -1,4 +1,4 @@
-package com.cvlvxi.layouttesting
+package com.cvlvxi.churchofbeb
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.*
+import com.cvlvxi.churchofbeb.R
 import kotlin.random.Random
 
 

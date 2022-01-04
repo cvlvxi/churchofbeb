@@ -1,4 +1,4 @@
-package com.cvlvxi.layouttesting.ui.theme
+package com.cvlvxi.churchofbeb.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -28,7 +28,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun LayoutTestingTheme(
+fun ChurchOfBebTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

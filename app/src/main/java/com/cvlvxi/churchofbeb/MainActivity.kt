@@ -1,4 +1,4 @@
-package com.cvlvxi.layouttesting
+package com.cvlvxi.churchofbeb
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -21,12 +21,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.cvlvxi.layouttesting.ui.theme.LayoutTestingTheme
+import com.cvlvxi.churchofbeb.ui.theme.ChurchOfBebTheme
+import com.cvlvxi.churchofbeb.R
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { LayoutTestingTheme { ExampleNoCanvas() } }
+    setContent { ChurchOfBebTheme { ExampleNoCanvas() } }
   }
 }
 

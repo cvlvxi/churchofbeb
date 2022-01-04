@@ -1,4 +1,4 @@
-package com.cvlvxi.layouttesting.ui.theme
+package com.cvlvxi.churchofbeb.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
