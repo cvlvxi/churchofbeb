@@ -1,6 +1,9 @@
 package com.cvlvxi.churchofbeb
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +15,7 @@ sealed class Areas(val area: String) {
     object ChurchEntrance: Areas("churchEntrance")
     object InsideChurch: Areas("insideChurch")
 }
+
 
 fun NavGraphBuilder.addChurchEntrance(
     nav: NavController,
