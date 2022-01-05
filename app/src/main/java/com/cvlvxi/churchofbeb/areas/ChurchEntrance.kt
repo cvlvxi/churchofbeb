@@ -23,6 +23,116 @@ import com.cvlvxi.churchofbeb.*
 import com.cvlvxi.churchofbeb.R
 
 @Composable
+fun ChurchEntrance(navInsideHandle: () -> Unit, modifier: Modifier) {
+  var nightMode by remember { mutableStateOf(false) }
+  Text(text = "dog")
+  ScaffoldComposable(
+      nightMode = nightMode,
+      toggleNightMode = { nightMode = !nightMode },
+      modifier = modifier,
+      navInsideHandle = navInsideHandle)
+}
+
+@Composable
+fun ScaffoldComposable(
+    nightMode: Boolean,
+    toggleNightMode: () -> Unit,
+    navInsideHandle: () -> Unit,
+    modifier: Modifier
+) {
+  Scaffold(modifier = modifier) {
+    val entrance = painterResource(id = R.drawable.entrance)
+    val bebface = painterResource(id = R.drawable.bebface)
+    val nightMode2 by rememberUpdatedState(nightMode)
+
+    BoxWithConstraints {
+      val simpleFloatTween =
+          TweenSpec<Float>(durationMillis = 3000, delay = 0, easing = LinearEasing)
+      val simpleColorTween =
+          TweenSpec<Color>(durationMillis = 3000, delay = 0, easing = LinearEasing)
+      val dayTime = Color.Yellow
+      val nightTime = Color.Black
+      val dayToNightAlpha: Float by
+          animateFloatAsState(if (!nightMode) 0.1f else 0.65f, animationSpec = simpleFloatTween)
+      val bebFaceAlpha: Float by
+          animateFloatAsState(if (!nightMode) 0.7f else 0.8f, animationSpec = simpleFloatTween)
+      val backgroundColor by
+          animateColorAsState(
+              if (nightMode) nightTime else dayTime, animationSpec = simpleColorTween)
+
+      Image(
+          modifier = Modifier.fillMaxSize(),
+          contentScale = ContentScale.Crop,
+          painter = entrance,
+          contentDescription = "Entrance")
+
+      FlyingLotties(nightMode2, modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
+
+      // Door Handle
+      Box(modifier = Modifier.align(Alignment.Center).offset(y = 200.dp, x = (-30).dp)) {
+        TransitionAlphaSimpleLottie(
+            lottieId = R.raw.door_sign1,
+            size = 50.dp,
+            alphaStart = 1.0f,
+            alphaEnd = 0.0f,
+            condition = nightMode,
+            modifier = Modifier.clickable {
+                if (!nightMode) {
+                    navInsideHandle()
+                }
+            })
+        TransitionAlphaSimpleLottie(
+            lottieId = R.raw.closed_sign1,
+            size = 50.dp,
+            alphaStart = 0.0f,
+            alphaEnd = 1.0f,
+            condition = nightMode,
+            modifier = Modifier)
+      }
+
+      // Walking Lotties
+      RunWalkingLotties(
+          nightMode2,
+          numLotties = 8,
+          modifier = Modifier.align(Alignment.BottomStart),
+          maxWidth = maxWidth)
+
+      Canvas(modifier = Modifier.fillMaxSize()) {
+        drawRect(backgroundColor, alpha = dayToNightAlpha)
+      }
+
+      // Sun and Moon and Beb Container
+      Box(modifier = Modifier.align(Alignment.TopEnd).offset(x = 50.dp, y = (-50).dp)) {
+        TransitionAlphaSimpleLottie(
+            lottieId = R.raw.sun1,
+            size = 200.dp,
+            alphaStart = 0.3f,
+            alphaEnd = 0.0f,
+            condition = nightMode,
+            modifier = Modifier.align(Alignment.Center))
+        TransitionAlphaSimpleLottie(
+            lottieId = R.raw.moon3,
+            size = 250.dp,
+            alphaStart = 0.0f,
+            alphaEnd = 0.5f,
+            condition = nightMode,
+            modifier = Modifier.align(Alignment.Center))
+        Image(
+            painter = bebface,
+            contentDescription = "BebFace",
+            modifier =
+                Modifier.align(Alignment.Center).alpha(bebFaceAlpha).size(70.dp).clickable {
+                  toggleNightMode()
+                })
+      }
+      if (nightMode) {
+        FireworkLotties(modifier = Modifier.align(Alignment.Center).offset(y = (-200).dp))
+      }
+    }
+  }
+}
+
+@Composable
 fun FlyingLotties(shouldSuspend: Boolean, modifier: Modifier, maxWidth: Dp) {
   val lottiePool = listOf(DirectionalLottie(R.raw.birds_flying1, false))
   val lotties = generateLotties(lottiePool, 2, maxWidth)
@@ -68,113 +178,14 @@ fun FireworkLotties(modifier: Modifier) {
               size = 200.dp,
               walkingDuration = 2000,
           ),
-    MovingLottieContainer(
-        lottiePool[1].lottieId,
-        imageIsLeft = lottiePool[0].imageIsLeft,
-        start = 50.0f,
-        end = 55.0f,
-        size = 100.dp,
-        walkingDuration = 2000,
-    ))
+          MovingLottieContainer(
+              lottiePool[1].lottieId,
+              imageIsLeft = lottiePool[0].imageIsLeft,
+              start = 50.0f,
+              end = 55.0f,
+              size = 100.dp,
+              walkingDuration = 2000,
+          ))
 
-    MovingLotties(false, lotties, modifier = modifier, isUp = true)
-}
-
-@Composable
-fun ChurchEntrance() {
-  var nightMode by remember { mutableStateOf(false) }
-  Text(text = "dog")
-  ScaffoldComposable(
-      nightMode = nightMode,
-      toggleNightMode = { nightMode = !nightMode },
-  )
-}
-
-@Composable
-fun ScaffoldComposable(nightMode: Boolean, toggleNightMode: () -> Unit) {
-  //  Scaffold(topBar = { TopMenu() }) {
-
-  Scaffold {
-    val entrance = painterResource(id = R.drawable.entrance)
-    val bebface = painterResource(id = R.drawable.bebface)
-    val nightMode2 by rememberUpdatedState(nightMode)
-
-    BoxWithConstraints {
-      val simpleFloatTween =
-          TweenSpec<Float>(durationMillis = 3000, delay = 0, easing = LinearEasing)
-      val simpleColorTween =
-          TweenSpec<Color>(durationMillis = 3000, delay = 0, easing = LinearEasing)
-      val dayTime = Color.Yellow
-      val nightTime = Color.Black
-      val dayToNightAlpha: Float by
-          animateFloatAsState(if (!nightMode) 0.1f else 0.65f, animationSpec = simpleFloatTween)
-      val bebFaceAlpha: Float by
-          animateFloatAsState(if (!nightMode) 0.7f else 0.8f, animationSpec = simpleFloatTween)
-      val backgroundColor by
-          animateColorAsState(
-              if (nightMode) nightTime else dayTime, animationSpec = simpleColorTween)
-
-      Image(
-          modifier = Modifier.fillMaxSize(),
-          contentScale = ContentScale.Crop,
-          painter = entrance,
-          contentDescription = "Entrance")
-
-      FlyingLotties(nightMode2, modifier = Modifier.align(Alignment.TopStart), maxWidth = maxWidth)
-
-      Box(modifier = Modifier.align(Alignment.Center).offset(y = 200.dp, x = (-30).dp)) {
-        TransitionAlphaSimpleLottie(
-            lottieId = R.raw.door_sign1,
-            size = 50.dp,
-            alphaStart = 1.0f,
-            alphaEnd = 0.0f,
-            condition = nightMode,
-            modifier = Modifier)
-        TransitionAlphaSimpleLottie(
-            lottieId = R.raw.closed_sign1,
-            size = 50.dp,
-            alphaStart = 0.0f,
-            alphaEnd = 1.0f,
-            condition = nightMode,
-            modifier = Modifier)
-      }
-
-      RunWalkingLotties(
-          nightMode2,
-          numLotties = 8,
-          modifier = Modifier.align(Alignment.BottomStart),
-          maxWidth = maxWidth)
-
-      Canvas(modifier = Modifier.fillMaxSize()) {
-        drawRect(backgroundColor, alpha = dayToNightAlpha)
-      }
-
-      Box(modifier = Modifier.align(Alignment.TopEnd).offset(x = 50.dp, y = (-50).dp)) {
-        TransitionAlphaSimpleLottie(
-            lottieId = R.raw.sun1,
-            size = 200.dp,
-            alphaStart = 0.3f,
-            alphaEnd = 0.0f,
-            condition = nightMode,
-            modifier = Modifier.align(Alignment.Center))
-        TransitionAlphaSimpleLottie(
-            lottieId = R.raw.moon3,
-            size = 250.dp,
-            alphaStart = 0.0f,
-            alphaEnd = 0.5f,
-            condition = nightMode,
-            modifier = Modifier.align(Alignment.Center))
-        Image(
-            painter = bebface,
-            contentDescription = "BebFace",
-            modifier =
-                Modifier.align(Alignment.Center).alpha(bebFaceAlpha).size(70.dp).clickable {
-                  toggleNightMode()
-                })
-      }
-      if (nightMode) {
-        FireworkLotties(modifier = Modifier.align(Alignment.Center).offset(y= (-200).dp))
-      }
-    }
-  }
+  MovingLotties(false, lotties, modifier = modifier, isUp = true)
 }
