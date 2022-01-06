@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cvlvxi.churchofbeb.*
 import com.cvlvxi.churchofbeb.R
+import kotlin.random.Random
 
 @Composable
 fun ChurchEntrance(navInsideHandle: () -> Unit, modifier: Modifier) {
@@ -59,6 +60,7 @@ fun ScaffoldComposable(
       val backgroundColor by
           animateColorAsState(
               if (nightMode) nightTime else dayTime, animationSpec = simpleColorTween)
+      var initDisabled by remember { mutableStateOf(true) }
 
       Image(
           modifier = Modifier.fillMaxSize(),
@@ -76,11 +78,12 @@ fun ScaffoldComposable(
             alphaStart = 1.0f,
             alphaEnd = 0.0f,
             condition = nightMode,
-            modifier = Modifier.clickable {
-                if (!nightMode) {
+            modifier =
+                Modifier.clickable {
+                  if (!nightMode) {
                     navInsideHandle()
-                }
-            })
+                  }
+                })
         TransitionAlphaSimpleLottie(
             lottieId = R.raw.closed_sign1,
             size = 50.dp,
@@ -91,11 +94,25 @@ fun ScaffoldComposable(
       }
 
       // Walking Lotties
-      RunWalkingLotties(
+      DayMovingLotties(
           nightMode2,
-          numLotties = 8,
+          numLotties = 10,
           modifier = Modifier.align(Alignment.BottomStart),
           maxWidth = maxWidth)
+
+      // Night Lotties
+      NightCloudLotties(
+          !nightMode2,
+          modifier = Modifier.align(Alignment.TopStart),
+          maxWidth = maxWidth,
+          initDisabled = initDisabled)
+      // Night Running Lotties
+      NightMovingLotties(
+          !nightMode2,
+          modifier = Modifier.align(Alignment.BottomStart),
+          maxWidth = maxWidth,
+          initDisabled = initDisabled,
+          numLotties = 10)
 
       Canvas(modifier = Modifier.fillMaxSize()) {
         drawRect(backgroundColor, alpha = dayToNightAlpha)
@@ -123,6 +140,7 @@ fun ScaffoldComposable(
             modifier =
                 Modifier.align(Alignment.Center).alpha(bebFaceAlpha).size(70.dp).clickable {
                   toggleNightMode()
+                  initDisabled = false
                 })
       }
       if (nightMode) {
@@ -134,13 +152,32 @@ fun ScaffoldComposable(
 
 @Composable
 fun FlyingLotties(shouldSuspend: Boolean, modifier: Modifier, maxWidth: Dp) {
-  val lottiePool = listOf(DirectionalLottie(R.raw.birds_flying1, false))
-  val lotties = generateLotties(lottiePool, 2, maxWidth)
+  val lottiePool =
+      listOf(
+          DirectionalLottie(R.raw.birds_flying1, false),
+          DirectionalLottie(R.raw.cloudday1, false, size = Random.nextInt(100, 200).dp))
+  val lotties = generateLotties(lottiePool, 3, maxWidth, true)
   MovingLotties(shouldSuspend, lotties, modifier = modifier)
 }
 
 @Composable
-fun RunWalkingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifier, maxWidth: Dp) {
+fun NightCloudLotties(
+    shouldSuspend: Boolean,
+    modifier: Modifier,
+    maxWidth: Dp,
+    initDisabled: Boolean
+) {
+  val lottiePool =
+      listOf(
+          DirectionalLottie(R.raw.cloudnight1, false, size = Random.nextInt(100, 200).dp),
+      )
+  val lotties = generateLotties(lottiePool, 10, maxWidth, true)
+  MovingLotties(
+      shouldSuspend, lotties, modifier = modifier, delayMs = 3000, initiallyDisabled = initDisabled)
+}
+
+@Composable
+fun RunRunningLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifier, maxWidth: Dp) {
   val lottiePool =
       listOf(
           DirectionalLottie(R.raw.walking_cat1, false),
@@ -154,7 +191,47 @@ fun RunWalkingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifie
           DirectionalLottie(R.raw.walking_orange1, false),
           DirectionalLottie(R.raw.walking_peach1, false),
       )
-  val lotties = generateLotties(lottiePool, numLotties, maxWidth)
+  val lotties = generateLotties(lottiePool, numLotties, maxWidth, false)
+  MovingLotties(shouldSuspend, lotties, modifier = modifier)
+}
+
+@Composable
+fun NightMovingLotties(
+    shouldSuspend: Boolean,
+    numLotties: Int,
+    modifier: Modifier,
+    maxWidth: Dp,
+    initDisabled: Boolean
+) {
+  val lottiePool =
+      listOf(
+          DirectionalLottie(R.raw.running_lizard1, false),
+          DirectionalLottie(R.raw.running_man2, false),
+          DirectionalLottie(R.raw.running_man1, false),
+          DirectionalLottie(R.raw.running_coffee1, false),
+          DirectionalLottie(R.raw.running_chips1, false),
+          DirectionalLottie(R.raw.running_coffee1, false),
+      )
+  val lotties = generateLotties(lottiePool, numLotties, maxWidth, true)
+  MovingLotties(shouldSuspend, lotties, modifier = modifier, delayMs = 3000, initiallyDisabled = initDisabled)
+}
+
+@Composable
+fun DayMovingLotties(shouldSuspend: Boolean, numLotties: Int, modifier: Modifier, maxWidth: Dp) {
+  val lottiePool =
+      listOf(
+          DirectionalLottie(R.raw.walking_cat1, false),
+          DirectionalLottie(R.raw.walking_girl1, false),
+          DirectionalLottie(R.raw.walking_girl2, false),
+          DirectionalLottie(R.raw.walking_girl3, true),
+          DirectionalLottie(R.raw.walking_guy1, false),
+          DirectionalLottie(R.raw.walking_guy2, false),
+          DirectionalLottie(R.raw.walking_guy3, true),
+          DirectionalLottie(R.raw.walking_duck1, false),
+          DirectionalLottie(R.raw.walking_orange1, false),
+          DirectionalLottie(R.raw.walking_peach1, false),
+      )
+  val lotties = generateLotties(lottiePool, numLotties, maxWidth, true)
   MovingLotties(shouldSuspend, lotties, modifier = modifier)
 }
 
